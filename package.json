@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "discord.js": "^14.9.0",
+    "dotenv": "^16.0.3"
+  },
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "main": "echo \"Running index.js\" && echo \"\" && node --no-warnings index.js",
+    "commands": "echo \"Running deploy-commands.js\" && echo \"\" && node --no-warnings deploy-commands.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
