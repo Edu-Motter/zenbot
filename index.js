@@ -5,6 +5,7 @@ const { TOKEN, CLIENT_ID, GUILD_ID } = process.env
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { exit } = require('node:process');
 const commandsPath = path.join(__dirname, 'commands');
 const commandsFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
@@ -47,7 +48,23 @@ async function checkMutedUsersGPT(jobTimer) {
 	logJobStart(guild.memberCount, jobTimer);
 
 	const members = await guild.members.fetch();
+	const channels = await guild.channels.fetch();
 	const afkChannel = guild.afkChannelId;
+	const botChannelId = '1100247312569204778';
+	
+	let botChannel;
+	for (const channel of channels){
+		if (channel[1].id === botChannelId){
+			botChannel = channel[1];	
+			log(`Bot channel founded: ${botChannel.name}`);
+			break;
+		}
+	}
+
+	if (botChannel == undefined){
+		log('Bot channel could not be found. Fix the botChannelId variable.')
+		process.exit(1);
+	}
 
 	for (const [memberId, member] of members) {
 
@@ -72,10 +89,10 @@ async function checkMutedUsersGPT(jobTimer) {
 
 
 				log(`Moving ${memberTag} to afk`)
-				member.send('Você foi avisado..');
+				botChannel.send(`<@${memberId}> Você foi avisado..`)
 				member.voice.setChannel(afkChannel);
 			} else {
-				member.send('Mutado vai para o away hein..');
+				botChannel.send(`<@${memberId}> Mutado vai para o away hein..`)
 				usersMuted.set(memberId, memberTag);
 				log(`Pushed ${memberTag} to usersMuted`);
 			}
@@ -83,11 +100,11 @@ async function checkMutedUsersGPT(jobTimer) {
 			continue;
 		}
 
-		log(`${memberTag} channel: ${member.voice.channel}`);
-		if (member.voice && member.voice.mute) {
-			log(`${memberTag} is mute.`);
-			member.send('Desmuta ai queridão/queridona!')
-		}
+		// log(`${memberTag} channel: ${member.voice.channel}`);
+		// if (member.voice && member.voice.mute) {
+		// 	log(`${memberTag} is mute.`);
+		// 	member.send('Desmuta ai queridão/queridona!')
+		// }
 
 		//User is clean:
 		usersMuted.delete(memberId);
